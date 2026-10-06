@@ -13,5 +13,12 @@ export function apiUploadsRoot() {
 }
 
 export function publicMediaBaseUrl() {
-  return (process.env.API_PUBLIC_URL || process.env.NEXT_PUBLIC_API_URL || `http://localhost:${process.env.PORT || 4000}`).replace(/\/api\/?$/, "").replace(/\/$/, "");
+  const configuredUrl = process.env.API_PUBLIC_URL || process.env.NEXT_PUBLIC_API_URL || "";
+  const renderUrl = process.env.RENDER_EXTERNAL_URL || "";
+  const selectedUrl =
+    renderUrl && (!configuredUrl || configuredUrl.includes("freshcart-api.onrender.com"))
+      ? renderUrl
+      : configuredUrl || renderUrl || `http://localhost:${process.env.PORT || 4000}`;
+
+  return selectedUrl.replace(/\/api\/?$/, "").replace(/\/$/, "");
 }

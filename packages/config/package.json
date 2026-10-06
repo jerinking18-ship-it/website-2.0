@@ -1,0 +1,12 @@
+{
+  "name": "@freshcart/config",
+  "private": true,
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "build": "echo \"Config package has no build\"",
+    "lint": "echo \"Config package has no lint\"",
+    "typecheck": "echo \"Config package has no typecheck\"",
+    "test": "echo \"Config package has no tests\""
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "name": "@freshcart/utils",
+  "private": true,
+  "type": "module",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "scripts": {
+    "build": "tsc --noEmit",
+    "lint": "echo \"No utils lint configured yet\"",
+    "typecheck": "tsc --noEmit",
+    "test": "echo \"No utils tests yet\""
+  },
+  "devDependencies": {
+    "typescript": "^5.7.2"
+  }
+}

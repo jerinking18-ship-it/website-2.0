@@ -1,0 +1,14 @@
+node_modules
+.next
+.next*
+.freshcart-store
+dist
+build
+coverage
+.turbo
+.env
+.env.local
+.env.*.local
+*.log
+*.tsbuildinfo
+.DS_Store

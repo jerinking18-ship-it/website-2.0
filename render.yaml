@@ -1,0 +1,40 @@
+services:
+  - type: web
+    name: freshcart-api
+    runtime: node
+    plan: free
+    region: singapore
+    rootDir: .
+    buildCommand: corepack enable && pnpm install --frozen-lockfile && pnpm --filter @freshcart/api prisma:generate && pnpm --filter @freshcart/api build
+    startCommand: pnpm --filter @freshcart/api start:prod
+    healthCheckPath: /api/ready
+    autoDeploy: true
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: DATABASE_URL
+        sync: false
+      - key: API_PUBLIC_URL
+        sync: false
+      - key: NEXT_PUBLIC_API_URL
+        sync: false
+      - key: CUSTOMER_SESSION_SECRET
+        generateValue: true
+      - key: ADMIN_SESSION_SECRET
+        generateValue: true
+      - key: OTP_SECRET
+        generateValue: true
+      - key: SEED_ADMIN_PASSWORD
+        sync: false
+      - key: REDIS_URL
+        sync: false
+      - key: MEILISEARCH_HOST
+        sync: false
+      - key: MEILISEARCH_API_KEY
+        sync: false
+      - key: MAPBOX_PUBLIC_TOKEN
+        sync: false
+      - key: MAPBOX_SECRET_TOKEN
+        sync: false

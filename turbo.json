@@ -1,0 +1,38 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "tasks": {
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": [".next/**", "dist/**", "build/**"]
+    },
+    "@freshcart/config#build": {
+      "dependsOn": ["^build"],
+      "outputs": []
+    },
+    "@freshcart/types#build": {
+      "dependsOn": ["^build"],
+      "outputs": []
+    },
+    "@freshcart/ui#build": {
+      "dependsOn": ["^build"],
+      "outputs": []
+    },
+    "@freshcart/utils#build": {
+      "dependsOn": ["^build"],
+      "outputs": []
+    },
+    "dev": {
+      "cache": false,
+      "persistent": true
+    },
+    "lint": {
+      "dependsOn": ["^lint"]
+    },
+    "typecheck": {
+      "dependsOn": ["^typecheck"]
+    },
+    "test": {
+      "dependsOn": ["^test"]
+    }
+  }
+}

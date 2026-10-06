@@ -1,0 +1,16 @@
+{
+  "name": "@freshcart/types",
+  "private": true,
+  "type": "module",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "scripts": {
+    "build": "tsc --noEmit",
+    "lint": "echo \"No types lint configured yet\"",
+    "typecheck": "tsc --noEmit",
+    "test": "echo \"No types tests yet\""
+  },
+  "devDependencies": {
+    "typescript": "^5.7.2"
+  }
+}

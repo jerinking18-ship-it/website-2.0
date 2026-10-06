@@ -23,7 +23,7 @@ async function bootstrap() {
     credentials: true
   });
   app.useGlobalFilters(new HttpErrorFilter());
-  await app.listen(process.env.PORT ? Number(process.env.PORT) : 4000);
+  await app.listen(process.env.PORT ? Number(process.env.PORT) : 4000, "0.0.0.0");
 }
 
 void bootstrap();

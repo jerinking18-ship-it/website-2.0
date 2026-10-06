@@ -1,4 +1,5 @@
 import { Injectable } from "@nestjs/common";
+import { publicMediaBaseUrl } from "../../common/media/media-paths";
 import { SearchIndexService } from "../../common/search/search-index.service";
 import { PrismaService } from "../../database/prisma.service";
 
@@ -91,7 +92,7 @@ export class HealthService {
     return {
       status: "local" as const,
       mediaPublicRoot: process.env.MEDIA_PUBLIC_ROOT?.trim() || "default",
-      publicBaseUrl: process.env.API_PUBLIC_URL || process.env.NEXT_PUBLIC_API_URL || `http://localhost:${process.env.PORT || 4000}`
+      publicBaseUrl: publicMediaBaseUrl()
     };
   }
 

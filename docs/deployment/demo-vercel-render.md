@@ -48,7 +48,7 @@ pnpm --filter @freshcart/api start:prod
 5. Health check path:
 
 ```text
-/api/ready
+/api/live
 ```
 
 6. Add env vars:

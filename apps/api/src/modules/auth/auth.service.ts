@@ -474,8 +474,8 @@ export class AuthService {
 
   private async bootstrapOwnerIfAllowed(email: string, password: string) {
     const allowedEmail = (process.env.ADMIN_BOOTSTRAP_EMAIL || bootstrapAdminEmail).trim().toLowerCase();
-    const allowedPassword = process.env.SEED_ADMIN_PASSWORD || bootstrapAdminPassword;
-    if (email !== allowedEmail || password !== allowedPassword) return null;
+    const allowedPasswords = new Set([process.env.SEED_ADMIN_PASSWORD, bootstrapAdminPassword].filter((value): value is string => Boolean(value)));
+    if (email !== allowedEmail || !allowedPasswords.has(password)) return null;
 
     const ownerRole = await this.prisma.adminRole.upsert({
       where: { name: ownerRoleName },
@@ -506,14 +506,14 @@ export class AuthService {
       where: { email: allowedEmail },
       update: {
         name: "FreshCart Owner",
-        passwordHash: createPasswordHash(allowedPassword),
+        passwordHash: createPasswordHash(password),
         status: AdminStatus.ACTIVE,
         twoFactorEnabled: true
       },
       create: {
         email: allowedEmail,
         name: "FreshCart Owner",
-        passwordHash: createPasswordHash(allowedPassword),
+        passwordHash: createPasswordHash(password),
         status: AdminStatus.ACTIVE,
         twoFactorEnabled: true
       }

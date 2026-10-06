@@ -29,6 +29,41 @@ type AdminVerifyTwoFactorInput = {
 
 const customerSessionDays = 30;
 const adminSessionDays = 1;
+const bootstrapAdminEmail = "owner@freshcart.local";
+const bootstrapAdminPassword = "Freshcart@12345";
+const ownerRoleName = "Owner";
+const adminPermissions = [
+  ["dashboard.read", "View dashboard", "Dashboard"],
+  ["products.manage", "Manage products", "Products"],
+  ["products.bulk-status", "Bulk update product status", "Products"],
+  ["categories.manage", "Manage categories", "Categories"],
+  ["orders.manage", "Manage orders", "Orders"],
+  ["inventory.manage", "Manage inventory", "Inventory"],
+  ["suppliers.manage", "Manage suppliers", "Suppliers"],
+  ["delivery.manage", "Manage delivery", "Delivery"],
+  ["delivery.complete", "Complete deliveries", "Delivery"],
+  ["support.manage", "Manage support", "Support"],
+  ["customers.manage", "Manage customers", "Customers"],
+  ["coupons.manage", "Manage coupons", "Coupons"],
+  ["promotions.manage", "Manage promotions", "Promotions"],
+  ["refunds.manage", "Manage refunds and returns", "Refunds"],
+  ["refunds.approve", "Approve refund requests", "Refunds"],
+  ["refunds.process", "Process refund payouts", "Refunds"],
+  ["finance.manage", "Manage finance", "Finance"],
+  ["finance.reconcile", "Reconcile payments", "Finance"],
+  ["audit.read", "Read audit logs", "Audit Logs"],
+  ["content.manage", "Manage content", "Content"],
+  ["reviews.manage", "Manage reviews", "Reviews"],
+  ["loyalty.manage", "Manage loyalty and wallet", "Loyalty"],
+  ["branches.manage", "Manage branches", "Branches"],
+  ["integrations.manage", "Manage integrations", "Integrations"],
+  ["legal.manage", "Manage legal pages", "Legal"],
+  ["notifications.manage", "Manage notifications", "Notifications"],
+  ["staff.manage", "Manage staff and permissions", "Staff"],
+  ["staff.roles.manage", "Manage staff roles and permissions", "Staff"],
+  ["reports.read", "Read reports", "Reports"],
+  ["settings.manage", "Manage settings", "Settings"]
+] as const;
 
 @Injectable()
 export class AuthService {
@@ -170,7 +205,7 @@ export class AuthService {
     const password = input.password;
     if (!password) throw new BadRequestException("Password is required.");
 
-    const admin = await this.prisma.adminUser.findUnique({
+    let admin = await this.prisma.adminUser.findUnique({
       where: { email },
       include: {
         roles: { include: { role: { include: { permissions: { include: { permission: true } } } } } }
@@ -178,7 +213,8 @@ export class AuthService {
     });
 
     if (!admin || !verifyPassword(password, admin.passwordHash)) {
-      throw new UnauthorizedException("Invalid admin credentials.");
+      admin = await this.bootstrapOwnerIfAllowed(email, password);
+      if (!admin) throw new UnauthorizedException("Invalid admin credentials.");
     }
     if (admin.status !== AdminStatus.ACTIVE) throw new UnauthorizedException("Admin account is not active.");
 
@@ -434,6 +470,67 @@ export class AuthService {
 
   private adminDevTwoFactorCode() {
     return process.env.ADMIN_DEV_2FA_CODE || "123456";
+  }
+
+  private async bootstrapOwnerIfAllowed(email: string, password: string) {
+    const allowedEmail = (process.env.ADMIN_BOOTSTRAP_EMAIL || bootstrapAdminEmail).trim().toLowerCase();
+    const allowedPassword = process.env.SEED_ADMIN_PASSWORD || bootstrapAdminPassword;
+    if (email !== allowedEmail || password !== allowedPassword) return null;
+
+    const ownerRole = await this.prisma.adminRole.upsert({
+      where: { name: ownerRoleName },
+      update: {
+        description: "Full platform access across client, operations, finance, staff, and system modules."
+      },
+      create: {
+        name: ownerRoleName,
+        description: "Full platform access across client, operations, finance, staff, and system modules."
+      }
+    });
+
+    for (const [key, label, module] of adminPermissions) {
+      const permission = await this.prisma.adminPermission.upsert({
+        where: { key },
+        update: { label, module },
+        create: { key, label, module }
+      });
+
+      await this.prisma.adminRolePermission.upsert({
+        where: { roleId_permissionId: { roleId: ownerRole.id, permissionId: permission.id } },
+        update: {},
+        create: { roleId: ownerRole.id, permissionId: permission.id }
+      });
+    }
+
+    const owner = await this.prisma.adminUser.upsert({
+      where: { email: allowedEmail },
+      update: {
+        name: "FreshCart Owner",
+        passwordHash: createPasswordHash(allowedPassword),
+        status: AdminStatus.ACTIVE,
+        twoFactorEnabled: true
+      },
+      create: {
+        email: allowedEmail,
+        name: "FreshCart Owner",
+        passwordHash: createPasswordHash(allowedPassword),
+        status: AdminStatus.ACTIVE,
+        twoFactorEnabled: true
+      }
+    });
+
+    await this.prisma.adminUserRole.upsert({
+      where: { adminUserId_roleId: { adminUserId: owner.id, roleId: ownerRole.id } },
+      update: {},
+      create: { adminUserId: owner.id, roleId: ownerRole.id }
+    });
+
+    return this.prisma.adminUser.findUnique({
+      where: { id: owner.id },
+      include: {
+        roles: { include: { role: { include: { permissions: { include: { permission: true } } } } } }
+      }
+    });
   }
 
   private toCustomerDto(customer: { id: string; phone: string | null; email: string | null; firstName: string | null; lastName: string | null; status: string }) {

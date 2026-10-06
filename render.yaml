@@ -6,6 +6,7 @@ services:
     region: singapore
     rootDir: .
     buildCommand: pnpm install --frozen-lockfile --prod=false && pnpm --filter @freshcart/api prisma:generate && pnpm --filter @freshcart/api build
+    preDeployCommand: pnpm --filter @freshcart/api prisma:deploy
     startCommand: pnpm --filter @freshcart/api start:prod
     healthCheckPath: /api/ready
     autoDeploy: true

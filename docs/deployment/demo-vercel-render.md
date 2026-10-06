@@ -33,7 +33,13 @@ In Render:
 pnpm install --frozen-lockfile --prod=false && pnpm --filter @freshcart/api prisma:generate && pnpm --filter @freshcart/api build
 ```
 
-4. Start command:
+4. Pre-deploy command:
+
+```bash
+pnpm --filter @freshcart/api prisma:deploy
+```
+
+5. Start command:
 
 ```bash
 pnpm --filter @freshcart/api start:prod

@@ -5,7 +5,7 @@ services:
     plan: free
     region: singapore
     rootDir: .
-    buildCommand: pnpm install --frozen-lockfile && pnpm --filter @freshcart/api prisma:generate && pnpm --filter @freshcart/api build
+    buildCommand: pnpm install --frozen-lockfile --prod=false && pnpm --filter @freshcart/api prisma:generate && pnpm --filter @freshcart/api build
     startCommand: pnpm --filter @freshcart/api start:prod
     healthCheckPath: /api/ready
     autoDeploy: true

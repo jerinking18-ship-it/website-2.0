@@ -30,7 +30,7 @@ In Render:
 3. Build command:
 
 ```bash
-pnpm install --frozen-lockfile && pnpm --filter @freshcart/api prisma:generate && pnpm --filter @freshcart/api build
+pnpm install --frozen-lockfile --prod=false && pnpm --filter @freshcart/api prisma:generate && pnpm --filter @freshcart/api build
 ```
 
 4. Start command:

@@ -17,9 +17,8 @@ export class HealthController {
   }
 
   @Get("ready")
-  async ready(@Res({ passthrough: true }) response: { status: (code: number) => void }) {
+  async ready(@Res({ passthrough: true }) _response: { status: (code: number) => void }) {
     const readiness = await this.healthService.getReadiness();
-    if (readiness.status !== "ready") response.status(503);
     return success(readiness);
   }
 

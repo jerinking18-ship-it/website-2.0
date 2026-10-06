@@ -7,8 +7,9 @@ export class PrismaService extends PrismaClient implements OnModuleInit, OnModul
   async onModuleInit() {
     try {
       await this.$connect();
-    } catch {
-      console.warn("Prisma could not connect on startup. /api/health will report database status.");
+    } catch (error) {
+      const message = error instanceof Error ? error.message.replace(/postgresql:\/\/[^@\s]+@/g, "postgresql://***@") : "unknown error";
+      console.warn(`Prisma could not connect on startup. /api/health will report database status. ${message}`);
     }
   }
 

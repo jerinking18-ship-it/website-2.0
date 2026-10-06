@@ -20,5 +20,7 @@ export function publicMediaBaseUrl() {
       ? renderUrl
       : configuredUrl || renderUrl || `http://localhost:${process.env.PORT || 4000}`;
 
-  return selectedUrl.replace(/\/api\/?$/, "").replace(/\/$/, "");
+  const normalizedUrl = selectedUrl.replace(/\/api\/?$/, "").replace(/\/$/, "");
+  if (normalizedUrl === "https://freshcart-api.onrender.com") return "https://freshcart-api-5r1h.onrender.com";
+  return normalizedUrl;
 }

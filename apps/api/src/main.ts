@@ -19,7 +19,15 @@ async function bootstrap() {
   app.use("/uploads", expressStatic(apiUploadsRoot(), { immutable: true, maxAge: "30d" }));
   app.setGlobalPrefix("api");
   app.enableCors({
-    origin: [/^http:\/\/localhost:3001$/, /^http:\/\/localhost:3002$/, /^http:\/\/localhost:3000$/],
+    origin: [
+      /^http:\/\/localhost:3000$/,
+      /^http:\/\/localhost:3001$/,
+      /^http:\/\/localhost:3002$/,
+      /^https:\/\/freshcart-admin-[a-z0-9-]+-jerin18\.vercel\.app$/,
+      /^https:\/\/freshcart-client-[a-z0-9-]+-jerin18\.vercel\.app$/,
+      "https://freshcart-admin-one.vercel.app",
+      "https://freshcart-client-one.vercel.app"
+    ],
     credentials: true
   });
   app.useGlobalFilters(new HttpErrorFilter());

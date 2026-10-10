@@ -1,4 +1,5 @@
 import { Injectable } from "@nestjs/common";
+import { shouldStoreUploadsInline } from "../../common/media/media-storage.service";
 import { publicMediaBaseUrl } from "../../common/media/media-paths";
 import { SearchIndexService } from "../../common/search/search-index.service";
 import { PrismaService } from "../../database/prisma.service";
@@ -89,10 +90,11 @@ export class HealthService {
   }
 
   private checkStorage() {
+    const inline = shouldStoreUploadsInline();
     return {
-      status: "local" as const,
+      status: inline ? "inline" as const : "local" as const,
       mediaPublicRoot: process.env.MEDIA_PUBLIC_ROOT?.trim() || "default",
-      publicBaseUrl: publicMediaBaseUrl()
+      publicBaseUrl: inline ? "database" : publicMediaBaseUrl()
     };
   }
 

@@ -45,7 +45,7 @@ export class MediaStorageService {
   }
 }
 
-function shouldStoreUploadsInline() {
+export function shouldStoreUploadsInline() {
   const driver = process.env.MEDIA_STORAGE_DRIVER?.trim().toLowerCase();
   if (driver) return driver === "inline" || driver === "database" || driver === "db";
   return Boolean(process.env.RENDER || process.env.RENDER_EXTERNAL_URL);

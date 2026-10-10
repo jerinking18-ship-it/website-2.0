@@ -297,11 +297,11 @@ type SupportTicket = {
 };
 
 const categoryArtwork: Record<string, { color: string; position: string }> = {
-  all: { color: "rgba(36, 71, 53, 0.28)", position: "center" },
+  all: { color: "rgba(52, 61, 38, 0.28)", position: "center" },
   "fresh-produce": { color: "rgba(21, 153, 71, 0.28)", position: "42% 42%" },
-  "dairy-and-eggs": { color: "rgba(247, 245, 239, 0.72)", position: "64% 48%" },
+  "dairy-and-eggs": { color: "rgba(239, 231, 216, 0.72)", position: "64% 48%" },
   bakery: { color: "rgba(201, 144, 82, 0.34)", position: "36% 54%" },
-  staples: { color: "rgba(198, 166, 107, 0.34)", position: "58% 58%" },
+  staples: { color: "rgba(177, 139, 96, 0.34)", position: "58% 58%" },
   beverages: { color: "rgba(31, 111, 235, 0.22)", position: "70% 44%" },
   frozen: { color: "rgba(125, 74, 158, 0.26)", position: "48% 48%" },
   household: { color: "rgba(137, 201, 173, 0.28)", position: "56% 40%" },

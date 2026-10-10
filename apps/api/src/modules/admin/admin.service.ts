@@ -322,6 +322,25 @@ export class AdminService {
     return { category: this.toAdminCategory(category) };
   }
 
+  async deleteCategory(authorization: string | undefined, id: string) {
+    const admin = await this.requireAdmin(authorization, "categories.manage");
+    const category = await this.findCategory(id);
+    const productCount = await this.prisma.product.count({ where: { categoryId: category.id, deletedAt: null } });
+    if (productCount > 0) throw new BadRequestException("Move or remove products before deleting this category.");
+
+    await this.prisma.category.update({
+      where: { id: category.id },
+      data: {
+        deletedAt: new Date(),
+        featured: false,
+        status: ProductStatus.INACTIVE
+      }
+    });
+    await this.searchIndex.syncCategory(category.id);
+    await this.recordAudit(admin.id, "CATEGORY_DELETED", "Category", category.id);
+    return { deleted: true, id: category.id };
+  }
+
   async listCoupons(authorization?: string) {
     await this.requireAdmin(authorization, "coupons.manage");
     const coupons = await this.prisma.coupon.findMany({ orderBy: [{ status: "asc" }, { updatedAt: "desc" }] });
@@ -593,7 +612,7 @@ export class AdminService {
   }
 
   private async findCategory(id: string) {
-    const category = await this.prisma.category.findFirst({ where: { OR: [{ id }, { slug: id }] } });
+    const category = await this.prisma.category.findFirst({ where: { deletedAt: null, OR: [{ id }, { slug: id }] } });
     if (!category) throw new NotFoundException("Category was not found.");
     return category;
   }

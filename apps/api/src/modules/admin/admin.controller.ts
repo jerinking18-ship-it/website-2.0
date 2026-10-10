@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Headers, Param, Patch, Post } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Headers, Param, Patch, Post } from "@nestjs/common";
 import { success } from "../../common/api-response";
 import { AdminService } from "./admin.service";
 
@@ -64,6 +64,11 @@ export class AdminController {
   @Patch("categories/:id")
   async updateCategory(@Headers("authorization") authorization: string | undefined, @Param("id") id: string, @Body() body: unknown) {
     return success(await this.adminService.updateCategory(authorization, id, body));
+  }
+
+  @Delete("categories/:id")
+  async deleteCategory(@Headers("authorization") authorization: string | undefined, @Param("id") id: string) {
+    return success(await this.adminService.deleteCategory(authorization, id));
   }
 
   @Get("coupons")

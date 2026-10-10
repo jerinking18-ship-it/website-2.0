@@ -54,6 +54,7 @@ const rateLimitPolicies = {
 export function requestHardeningMiddleware(req: ApiRequest, res: ApiResponse, next: Next) {
   applySecurityHeaders(res);
   if (isUploadAsset(req)) {
+    applyUploadAssetHeaders(res);
     next();
     return;
   }
@@ -83,6 +84,11 @@ function applySecurityHeaders(res: ApiResponse) {
   res.setHeader("Referrer-Policy", "no-referrer");
   res.setHeader("Cross-Origin-Resource-Policy", "same-site");
   res.setHeader("Permissions-Policy", "camera=(), microphone=(), geolocation=(), payment=()");
+}
+
+function applyUploadAssetHeaders(res: ApiResponse) {
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Cross-Origin-Resource-Policy", "cross-origin");
 }
 
 function applyRateLimit(req: ApiRequest) {

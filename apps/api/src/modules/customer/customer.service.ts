@@ -1647,7 +1647,7 @@ export class CustomerService {
       productName: review.product.name,
       category: review.product.category.name,
       unit: review.product.unit,
-      color: review.product.badge || "#f5ca99",
+      color: review.product.badge || "#EFE7D8",
       rating: review.rating.toFixed(1),
       text: review.body,
       title: review.title,

@@ -31,6 +31,8 @@ export class MediaStorageService {
     if (!buffer.length) throw new BadRequestException("Uploaded image is empty.");
     if (buffer.length > 5 * 1024 * 1024) throw new BadRequestException("Uploaded image must be 5 MB or smaller.");
 
+    if (shouldStoreUploadsInline()) return source;
+
     const safeNamespace = namespace.replace(/[^a-z0-9-]/gi, "-").toLowerCase() || "media";
     const date = new Date();
     const folder = `${date.getFullYear()}/${String(date.getMonth() + 1).padStart(2, "0")}/${safeNamespace}`;
@@ -41,4 +43,10 @@ export class MediaStorageService {
 
     return `${publicMediaBaseUrl()}/uploads/${folder}/${filename}`;
   }
+}
+
+function shouldStoreUploadsInline() {
+  const driver = process.env.MEDIA_STORAGE_DRIVER?.trim().toLowerCase();
+  if (driver) return driver === "inline" || driver === "database" || driver === "db";
+  return Boolean(process.env.RENDER || process.env.RENDER_EXTERNAL_URL);
 }
